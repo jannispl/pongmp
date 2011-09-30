@@ -26,6 +26,7 @@ private:
 	float m_fPosX;
 	float m_fPosY;
 	float m_fVelocity;
+	float m_fAcceleration;
 	bool m_bInteraction;
 
 	ALLEGRO_BITMAP *m_pBitmap;
