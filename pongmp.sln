@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pongmp", ".\client\pongmp-client.vcproj", "{29DEFEA8-A5A7-4FA4-B78B-CBDB3D6BCBE6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pongsvr", ".\server\pongmp-server.vcproj", "{DB4505A5-DFE3-49EB-8888-108E88107549}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29DEFEA8-A5A7-4FA4-B78B-CBDB3D6BCBE6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{29DEFEA8-A5A7-4FA4-B78B-CBDB3D6BCBE6}.Debug|Win32.Build.0 = Debug|Win32
+		{29DEFEA8-A5A7-4FA4-B78B-CBDB3D6BCBE6}.Release|Win32.ActiveCfg = Release|Win32
+		{29DEFEA8-A5A7-4FA4-B78B-CBDB3D6BCBE6}.Release|Win32.Build.0 = Release|Win32
+		{DB4505A5-DFE3-49EB-8888-108E88107549}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DB4505A5-DFE3-49EB-8888-108E88107549}.Debug|Win32.Build.0 = Debug|Win32
+		{DB4505A5-DFE3-49EB-8888-108E88107549}.Release|Win32.ActiveCfg = Release|Win32
+		{DB4505A5-DFE3-49EB-8888-108E88107549}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
