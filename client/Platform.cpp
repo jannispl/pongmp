@@ -108,15 +108,19 @@ float Platform::getVelocity()
 	return m_fVelocity;
 }
 
+float Platform::getAcceleration() {
+	return m_fAcceleration;
+}
+
 void Platform::accelerate(float fAcceleration)
 {
 	m_bInteraction = true;
-	m_fVelocity += fAcceleration;
+	m_fAcceleration = fAcceleration;
 }
 
 void Platform::decelerate(float fDeceleration)
 {
 	m_bInteraction = true;
-	m_fVelocity -= fDeceleration;
+	m_fAcceleration = -fDeceleration;
 }
 
