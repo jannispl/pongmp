@@ -22,12 +22,16 @@ public:
 	void accelerate(float fAcceleration);
 	void decelerate(float fDeceleration);
 
+	enum PropulsionState {OFF, UP, DOWN};
+
+	PropulsionState getPropulsionState();
+	void setPropulsionState(PropulsionState propulsionState);
+
 private:
 	float m_fPosX;
 	float m_fPosY;
 	float m_fVelocity;
-	float m_fAcceleration;
-	bool m_bInteraction;
+	PropulsionState m_propulsionState;
 
 	ALLEGRO_BITMAP *m_pBitmap;
 };
