@@ -92,14 +92,17 @@ void Network::process()
 				m_fLastPlatformPacket = fTimestamp;
 
 				float fPos, fVelocity;
+				Platform::PropulsionState propulsionState;
 				bsIn.Read(fPos);
 				bsIn.Read(fVelocity);
+				bsIn.Read(propulsionState);
 
 				Platform *p = g_pGame->getPlatform(1);
 				float fX, fY;
 				p->getPosition(fX, fY);
 				p->setPosition(fX, fPos);
 				p->setVelocity(fVelocity);
+				p->setPropulsionState(propulsionState);
 			}
 			break;
 
@@ -156,12 +159,13 @@ float Network::getCurrentTime()
 	return (float)qwDelta / 1000.0f;
 }
 
-void Network::updatePlatform(float fPos, float fVelocity)
+void Network::updatePlatform(float fPos, float fVelocity, Platform::PropulsionState propulsionState)
 {
 	RakNet::BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_PLATFORM);
 	bsOut.Write(fPos);
 	bsOut.Write(fVelocity);
+	bsOut.Write(propulsionState);
 	m_pPeer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
