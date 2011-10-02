@@ -116,15 +116,39 @@ void Game::run()
 			if (m_pKeyboard->isKeyDown(Keyboard::UP))
 			{
 				//m_pPlatform[0]->decelerate(0.60f);
-				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::UP);
+
+				if (m_pPlatform[0]->getPropulsionState() != Platform::UP)
+				{
+					m_pPlatform[0]->setPropulsionState(Platform::UP);
+
+					float fX, fY;
+					m_pPlatform[0]->getPosition(fX, fY);
+					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::UP);
+				}
 			}
 			else if (m_pKeyboard->isKeyDown(Keyboard::DOWN))
 			{
 				//m_pPlatform[0]->accelerate(0.60f);
-				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::DOWN);
 
-			} else {
-				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::OFF);
+				if (m_pPlatform[0]->getPropulsionState() != Platform::DOWN)
+				{
+					m_pPlatform[0]->setPropulsionState(Platform::DOWN);
+
+					float fX, fY;
+					m_pPlatform[0]->getPosition(fX, fY);
+					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::DOWN);
+				}
+			}
+			else
+			{
+				if (m_pPlatform[0]->getPropulsionState() != Platform::OFF)
+				{
+					m_pPlatform[0]->setPropulsionState(Platform::OFF);
+
+					float fX, fY;
+					m_pPlatform[0]->getPosition(fX, fY);
+					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::OFF);
+				}
 			}
 			
 			// sync the platforms
