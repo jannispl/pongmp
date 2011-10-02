@@ -2,10 +2,11 @@
 #include "Platform.h"
 
 Platform::Platform(float fX)
-	: m_bInteraction(false)
 {
 	m_fPosX = fX;
 	m_fPosY = SCREEN_H / 2.0f - PLATFORM_H / 2.0f;
+	m_fVelocity = 0.0f;
+	m_propulsionState = OFF;
 }
 
 Platform::~Platform()
@@ -19,7 +20,7 @@ bool Platform::initialize()
 	{
 		return false;
 	}
-	
+
 	al_set_target_bitmap(m_pBitmap);
 	al_clear_to_color(al_map_rgb(255, 255, 255));
 
@@ -33,38 +34,43 @@ void Platform::deinitialize()
 
 bool Platform::process()
 {
-	m_bInteraction = false;
-	bool bInteraction = m_bInteraction;
-
-	bool bRedraw = bInteraction;
-
-	if (m_bInteraction)
+	if(m_propulsionState == UP)
 	{
-		if (m_fVelocity > 7.0f)
-		{
-			m_fVelocity = 7.0f;
-		}
-		else if (m_fVelocity < -7.0f)
+		m_fVelocity -= 0.6f;
+		
+		// speed limiter
+		if(m_fVelocity < -7.0f)
 		{
 			m_fVelocity = -7.0f;
 		}
 	}
-	else
+	else if(m_propulsionState == DOWN)
+	{
+		m_fVelocity += 0.6f;
+		
+		// speed limiter
+		if(m_fVelocity > 7.0f)
+		{
+			m_fVelocity = 7.0f;
+		}
+	}
+	else // no propulsion
 	{
 		if (m_fVelocity < 0.0f)
 		{
-			bRedraw = true;
 			m_fVelocity += 0.15f;
 			if (m_fVelocity > 0.0f) m_fVelocity = 0.0f;
 		}
 		else if (m_fVelocity > 0.0f)
 		{
-			bRedraw = true;
 			m_fVelocity -= 0.15f;
 			if (m_fVelocity < 0.0f) m_fVelocity = 0.0f;
 		}
 	}
 
+
+	// update position
+	float oldPos = m_fPosY;
 	m_fPosY += m_fVelocity;
 	if (m_fPosY < 0)
 	{
@@ -77,7 +83,7 @@ bool Platform::process()
 		m_fVelocity = 0.0f;
 	}
 
-	return bRedraw;
+	return oldPos != m_fPosY;
 }
 
 void Platform::draw()
@@ -100,7 +106,6 @@ void Platform::getPosition(float &fPosX, float &fPosY)
 void Platform::setVelocity(float fVelocity)
 {
 	m_fVelocity = fVelocity;
-	m_bInteraction = true;
 }
 
 float Platform::getVelocity()
@@ -110,13 +115,18 @@ float Platform::getVelocity()
 
 void Platform::accelerate(float fAcceleration)
 {
-	m_bInteraction = true;
 	m_fVelocity += fAcceleration;
 }
 
 void Platform::decelerate(float fDeceleration)
 {
-	m_bInteraction = true;
 	m_fVelocity -= fDeceleration;
 }
 
+Platform::PropulsionState Platform::getPropulsionState() {
+	return m_propulsionState;
+}
+
+void Platform::setPropulsionState(Platform::PropulsionState propulsionState) {
+	m_propulsionState = propulsionState;
+}

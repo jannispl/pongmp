@@ -104,7 +104,7 @@ void Game::run()
 				bSendPlatform = false;
 				float fX, fY;
 				m_pPlatform[0]->getPosition(fX, fY);
-				m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity());
+				m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), m_pPlatform[0]->getPropulsionState());
 			}
 		}
 		else if (ev.type == ALLEGRO_EVENT_TIMER && ev.timer.source == m_pFrameTimer)
@@ -115,11 +115,16 @@ void Game::run()
 
 			if (m_pKeyboard->isKeyDown(Keyboard::UP))
 			{
-				m_pPlatform[0]->decelerate(0.60f);
+				//m_pPlatform[0]->decelerate(0.60f);
+				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::UP);
 			}
 			else if (m_pKeyboard->isKeyDown(Keyboard::DOWN))
 			{
-				m_pPlatform[0]->accelerate(0.60f);
+				//m_pPlatform[0]->accelerate(0.60f);
+				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::DOWN);
+
+			} else {
+				m_pPlatform[0]->setPropulsionState(Platform::PropulsionState::OFF);
 			}
 			
 			// sync the platforms

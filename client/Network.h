@@ -19,7 +19,7 @@ public:
 
 	float getCurrentTime();
 
-	void updatePlatform(float fPosition, float fVelocity);
+	void updatePlatform(float fPosition, float fVelocity, Platform::PropulsionState propulsion);
 	void updateInput(bool bUp, bool bDown);
 
 private:

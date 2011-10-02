@@ -131,17 +131,21 @@ int main(int argc, char *argv[])
 					RakNet::BitStream bsIn(packet->data, packet->length, false);
 					bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
+					
 					float fPos, fVelocity;
+					enum {OFF, UP, DOWN} propulsionState; // yes. cba to include the Platform header file
 					bsIn.Read(fPos);
 					bsIn.Read(fVelocity);
+					bsIn.Read(propulsionState);
 
-					printf("platform %f/%f\n", fPos, fVelocity);
+					printf("platform %f/%f/%d\n", fPos, fVelocity, propulsionState);
 
 					RakNet::BitStream bsOut;
 					bsOut.Write((RakNet::MessageID)ID_PLATFORM);
 					bsOut.Write(currentTime());
 					bsOut.Write(fPos);
 					bsOut.Write(fVelocity);
+					bsOut.Write(propulsionState);
 					peer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, packet->systemAddress, false);
 				}
 				break;
