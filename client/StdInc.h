@@ -6,8 +6,9 @@
 #include <windows.h>
 #endif
 
-#include "Game.h"
+#include "../shared/Shared.h"
 
+#include "Game.h"
 extern Game *g_pGame;
 
 #endif

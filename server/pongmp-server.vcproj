@@ -118,7 +118,8 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="StdInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -169,6 +170,42 @@
 	<Files>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Network.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Network.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Server.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Server.h"
+			>
+		</File>
+		<File
+			RelativePath="..\shared\Shared.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\StdInc.cpp"
+			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\StdInc.h"
 			>
 		</File>
 	</Files>

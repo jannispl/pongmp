@@ -14,8 +14,6 @@ Network::~Network()
 
 bool Network::initialize()
 {
-	m_qwInitTime = GetTickCount64();
-
 	m_pPeer = RakNet::RakPeerInterface::GetInstance();
 	if (!m_pPeer)
 	{
@@ -50,22 +48,7 @@ void Network::process()
 			printf("Another client has connected.\n");
 			break;
 		case ID_CONNECTION_REQUEST_ACCEPTED:
-			{
-				printf("Our connection request has been accepted.\n");
-
-				// Use a BitStream to write a custom user message
-				// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
-				RakNet::BitStream bsOut;
-				bsOut.Write((RakNet::MessageID)ID_INIT);
-
-				Platform *p = g_pGame->getPlatform(1);
-				float fX, fY;
-				p->getPosition(fX, fY);
-				bsOut.Write(fY);
-				bsOut.Write(p->getVelocity());
-
-				m_pPeer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pPacket->systemAddress, false);
-			}
+			printf("Our connection request has been accepted.\n");
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 			printf("The server is full.\n");
@@ -106,57 +89,11 @@ void Network::process()
 			}
 			break;
 
-		/*case ID_INIT:
-			{
-				RakNet::BitStream bsIn(pPacket->data, pPacket->length, false);
-				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
-
-				bsIn.Read(m_fCurrentPos);
-			}
-			break;
-
-		case ID_CLIENTUPDATE:
-			{
-				RakNet::BitStream bsIn(pPacket->data, pPacket->length, false);
-				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
-
-				float fTime;
-				unsigned char ucState;
-				float fPos, fVel;
-				bsIn.Read(fTime);
-				bsIn.Read(ucState);
-				bsIn.Read(fPos);
-				bsIn.Read(fVel);
-
-				float fDeltaPos = m_fCurrentPos >= fPos ? m_fCurrentPos - fPos : fPos - m_fCurrentPos;
-				if (fDeltaPos > 1.0f)
-				{
-					m_fCurrentPos = fPos;
-				}
-				else if (fDeltaPos > 0.2f)
-				{
-					m_fCurrentPos += (m_fCurrentPos - fPos) * 0.1f;
-				}
-
-				Platform *p = g_pGame->getPlatform(1);
-				float fX, fY;
-				p->getPosition(fX, fY);
-				p->setPosition(fX, m_fCurrentPos);
-				p->setVelocity(fVel);
-			}
-			break;*/
-		
 		default:
 			printf("Message with identifier %i has arrived.\n", pPacket->data[0]);
 			break;
 		}
 	}
-}
-
-float Network::getCurrentTime()
-{
-	DWORD64 qwDelta = GetTickCount64() - m_qwInitTime;
-	return (float)qwDelta / 1000.0f;
 }
 
 void Network::updatePlatform(float fPos, float fVelocity, Platform::PropulsionState propulsionState)
@@ -165,25 +102,6 @@ void Network::updatePlatform(float fPos, float fVelocity, Platform::PropulsionSt
 	bsOut.Write((RakNet::MessageID)ID_PLATFORM);
 	bsOut.Write(fPos);
 	bsOut.Write(fVelocity);
-	bsOut.Write(propulsionState);
-	m_pPeer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
-}
-
-void Network::updateInput(bool bUp, bool bDown)
-{
-	unsigned char ucState = 0;
-	if (bUp)
-	{
-		ucState = 1;
-	}
-	else if (bDown)
-	{
-		ucState = 2;
-	}
-
-	RakNet::BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_INPUT);
-	bsOut.Write(GetTickCount());
-	bsOut.Write(ucState);
+	bsOut.Write((char)propulsionState);
 	m_pPeer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }

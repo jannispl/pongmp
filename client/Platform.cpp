@@ -39,7 +39,7 @@ bool Platform::process()
 		m_fVelocity -= 0.6f;
 		
 		// speed limiter
-		if(m_fVelocity < -7.0f)
+		if (m_fVelocity < -7.0f)
 		{
 			m_fVelocity = -7.0f;
 		}
@@ -49,7 +49,7 @@ bool Platform::process()
 		m_fVelocity += 0.6f;
 		
 		// speed limiter
-		if(m_fVelocity > 7.0f)
+		if (m_fVelocity > 7.0f)
 		{
 			m_fVelocity = 7.0f;
 		}

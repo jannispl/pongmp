@@ -222,6 +222,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\shared\Shared.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\StdInc.cpp"
 			>
 			<FileConfiguration
