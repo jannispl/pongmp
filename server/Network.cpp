@@ -36,26 +36,17 @@ void Network::process()
 	{
 		switch (pPacket->data[0])
 		{
-		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-			printf("Another client has disconnected.\n");
-			break;
-		case ID_REMOTE_CONNECTION_LOST:
-			printf("Another client has lost the connection.\n");
-			break;
-		case ID_REMOTE_NEW_INCOMING_CONNECTION:
-			printf("Another client has connected.\n");
-			break;
 		case ID_NEW_INCOMING_CONNECTION:
-			printf("A connection is incoming.\n");
-			break;
-		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			printf("The server is full.\n");
+			//printf("A connection is incoming.\n");
+			g_pServer->incomingConnection(pPacket->systemAddress);
 			break;
 		case ID_DISCONNECTION_NOTIFICATION:
-			printf("A client has disconnected.\n");
+			//printf("A client has disconnected.\n");
+			g_pServer->lostConnection(pPacket->systemAddress, Server::Leaving);
 			break;
 		case ID_CONNECTION_LOST:
-			printf("A client lost the connection.\n");
+			//printf("A client lost the connection.\n");
+			g_pServer->lostConnection(pPacket->systemAddress, Server::Timeout);
 			break;
 
 		case ID_PLATFORM:
@@ -69,15 +60,17 @@ void Network::process()
 				bsIn.Read(fVelocity);
 				bsIn.Read(cPropulsionState);
 
+				g_pServer->platformUpdate(pPacket->systemAddress, fPos, fVelocity, cPropulsionState);
+
 				printf("platform %f/%f/%d\n", fPos, fVelocity, cPropulsionState);
 
-				RakNet::BitStream bsOut;
+				/*RakNet::BitStream bsOut;
 				bsOut.Write((RakNet::MessageID)ID_PLATFORM);
 				bsOut.Write(Shared::getCurrentTime());
 				bsOut.Write(fPos);
 				bsOut.Write(fVelocity);
 				bsOut.Write((char)cPropulsionState);
-				m_pPeer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, pPacket->systemAddress, false);
+				m_pPeer->Send(&bsOut, HIGH_PRIORITY, UNRELIABLE_SEQUENCED, 0, pPacket->systemAddress, false);*/
 			}
 			break;
 
@@ -86,4 +79,9 @@ void Network::process()
 			break;
 		}
 	}
+}
+
+void Network::send(RakNet::BitStream *pBitStream, PacketPriority priority, PacketReliability reliability, RakNet::SystemAddress systemAddress, bool bBroadcast)
+{
+	m_pPeer->Send(pBitStream, priority, reliability, 0, systemAddress, bBroadcast);
 }

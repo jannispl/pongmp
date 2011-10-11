@@ -23,7 +23,6 @@ bool Platform::initialize()
 
 	al_set_target_bitmap(m_pBitmap);
 	al_clear_to_color(al_map_rgb(255, 255, 255));
-
 	return true;
 }
 

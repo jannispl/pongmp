@@ -1,15 +1,18 @@
 #include "StdInc.h"
 #include "Server.h"
+#include "Player.h"
 
 Server::Server()
 	: m_bRunning(false)
 {
 	m_pNetwork = new Network();
+	m_pGroup = new Group();
 }
 
 Server::~Server()
 {
 	delete m_pNetwork;
+	delete m_pGroup;
 }
 
 bool Server::initialize()
@@ -37,4 +40,32 @@ void Server::run()
 		Shared::sleep(5);
 	}
 	while (m_bRunning);
+}
+
+Network *Server::getNetwork()
+{
+	return m_pNetwork;
+}
+
+void Server::incomingConnection(RakNet::SystemAddress systemAddress)
+{
+	Player *pPlayer = new Player(systemAddress);
+
+	m_pGroup->addPlayer(pPlayer);
+}
+
+void Server::lostConnection(RakNet::SystemAddress systemAddress, Server::eQuitReason quitReason)
+{
+	m_pGroup->removePlayer(m_pGroup->findPlayer(systemAddress));
+}
+
+void Server::platformUpdate(RakNet::SystemAddress systemAddress, float fPosition, float fVelocity, char cPropulsionState)
+{
+	Player *pPlayer = m_pGroup->findPlayer(systemAddress);
+
+	Player *pRemote = m_pGroup->getPlayer(pPlayer->getGroupSlot() ^ 1);
+	if (pRemote != NULL)
+	{
+		pRemote->sendPlatformUpdate(fPosition, fVelocity, cPropulsionState);
+	}
 }

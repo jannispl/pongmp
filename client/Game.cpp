@@ -90,127 +90,134 @@ void Game::run()
 	do
 	{
 		ALLEGRO_EVENT ev;
-		al_wait_for_event(m_pEventQueue, &ev);
+		ALLEGRO_TIMEOUT t;
+		al_init_timeout(&t, 0.005);
+		//al_wait_for_event(m_pEventQueue, &ev);
+		bool bGot = al_wait_for_event_until(m_pEventQueue, &ev, &t);
 
-		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+		if (bGot)
 		{
-			m_bRunning = false;
-			break;
-		}
-		else if (ev.type == ALLEGRO_EVENT_TIMER && ev.timer.source == m_pNetworkTimer)
-		{
-			if (bSendPlatform)
+			if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 			{
-				bSendPlatform = false;
+				m_bRunning = false;
+				break;
+			}
+			else if (ev.type == ALLEGRO_EVENT_TIMER && ev.timer.source == m_pNetworkTimer)
+			{
+				if (bSendPlatform)
+				{
+					bSendPlatform = false;
+					float fX, fY;
+					m_pPlatform[0]->getPosition(fX, fY);
+					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), m_pPlatform[0]->getPropulsionState());
+				}
+			}
+			else if (ev.type == ALLEGRO_EVENT_TIMER && ev.timer.source == m_pFrameTimer)
+			{
+				m_pNetwork->process();
+
+				if (m_pGraphics->process()) bRedraw = true;
+
+				if (m_pKeyboard->isKeyDown(Keyboard::UP))
+				{
+					//m_pPlatform[0]->decelerate(0.60f);
+
+					if (m_pPlatform[0]->getPropulsionState() != Platform::UP)
+					{
+						m_pPlatform[0]->setPropulsionState(Platform::UP);
+
+						float fX, fY;
+						m_pPlatform[0]->getPosition(fX, fY);
+						m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::UP);
+					}
+				}
+				else if (m_pKeyboard->isKeyDown(Keyboard::DOWN))
+				{
+					//m_pPlatform[0]->accelerate(0.60f);
+
+					if (m_pPlatform[0]->getPropulsionState() != Platform::DOWN)
+					{
+						m_pPlatform[0]->setPropulsionState(Platform::DOWN);
+
+						float fX, fY;
+						m_pPlatform[0]->getPosition(fX, fY);
+						m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::DOWN);
+					}
+				}
+				else
+				{
+					if (m_pPlatform[0]->getPropulsionState() != Platform::OFF)
+					{
+						m_pPlatform[0]->setPropulsionState(Platform::OFF);
+
+						float fX, fY;
+						m_pPlatform[0]->getPosition(fX, fY);
+						m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::OFF);
+					}
+				}
+				
+				// sync the platforms
+				//m_pPlatform[1]->setVelocity(m_pPlatform[0]->getVelocity());
+
 				float fX, fY;
 				m_pPlatform[0]->getPosition(fX, fY);
-				m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), m_pPlatform[0]->getPropulsionState());
+				float fX2, fY2;
+				m_pPlatform[1]->getPosition(fX2, fY2);
+
+				float fBallX, fBallY;
+				m_pBall->getPosition(fBallX, fBallY);
+
+	#if 0
+				if (fBallX < fX + PLATFORM_W)
+				{
+					if (fBallY + BALL_SIZE < fY || fBallY - BALL_SIZE > fY + PLATFORM_H)
+					{
+						MessageBoxA(NULL, "lose tbh", "", 0);
+						ExitProcess(0);
+					}
+					else
+					{
+						float fVelX, fVelY;
+						m_pBall->getVelocity(fVelX, fVelY);
+						m_pBall->setVelocity(-fVelX, fVelY);
+					}
+				}
+				if (fBallX + BALL_SIZE > fX2)
+				{
+					if (fBallY + BALL_SIZE < fY2 || fBallY - BALL_SIZE > fY2 + PLATFORM_H)
+					{
+						MessageBoxA(NULL, "lose tbh", "", 0);
+						ExitProcess(0);
+					}
+					else
+					{
+						float fVelX, fVelY;
+						m_pBall->getVelocity(fVelX, fVelY);
+						m_pBall->setVelocity(-fVelX, fVelY);
+					}
+				}
+	#endif
+
+				if (m_pPlatform[0]->process())
+				{
+					bRedraw = true;
+					bSendPlatform = true;
+				}
+				if (m_pPlatform[1]->process()) bRedraw = true;
+				if (m_pBall->process()) bRedraw = true;
 			}
-		}
-		else if (ev.type == ALLEGRO_EVENT_TIMER && ev.timer.source == m_pFrameTimer)
-		{
-			m_pNetwork->process();
-
-			if (m_pGraphics->process()) bRedraw = true;
-
-			if (m_pKeyboard->isKeyDown(Keyboard::UP))
+			else if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
 			{
-				//m_pPlatform[0]->decelerate(0.60f);
-
-				if (m_pPlatform[0]->getPropulsionState() != Platform::UP)
-				{
-					m_pPlatform[0]->setPropulsionState(Platform::UP);
-
-					float fX, fY;
-					m_pPlatform[0]->getPosition(fX, fY);
-					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::UP);
-				}
+				m_pKeyboard->handleKeyDown(ev.keyboard.keycode);
 			}
-			else if (m_pKeyboard->isKeyDown(Keyboard::DOWN))
+			else if (ev.type == ALLEGRO_EVENT_KEY_UP)
 			{
-				//m_pPlatform[0]->accelerate(0.60f);
-
-				if (m_pPlatform[0]->getPropulsionState() != Platform::DOWN)
-				{
-					m_pPlatform[0]->setPropulsionState(Platform::DOWN);
-
-					float fX, fY;
-					m_pPlatform[0]->getPosition(fX, fY);
-					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::DOWN);
-				}
+				m_pKeyboard->handleKeyUp(ev.keyboard.keycode);
 			}
-			else
-			{
-				if (m_pPlatform[0]->getPropulsionState() != Platform::OFF)
-				{
-					m_pPlatform[0]->setPropulsionState(Platform::OFF);
 
-					float fX, fY;
-					m_pPlatform[0]->getPosition(fX, fY);
-					m_pNetwork->updatePlatform(fY, m_pPlatform[0]->getVelocity(), Platform::OFF);
-				}
-			}
-			
-			// sync the platforms
-			//m_pPlatform[1]->setVelocity(m_pPlatform[0]->getVelocity());
-
-			float fX, fY;
-			m_pPlatform[0]->getPosition(fX, fY);
-			float fX2, fY2;
-			m_pPlatform[1]->getPosition(fX2, fY2);
-
-			float fBallX, fBallY;
-			m_pBall->getPosition(fBallX, fBallY);
-
-#if 0
-			if (fBallX < fX + PLATFORM_W)
-			{
-				if (fBallY + BALL_SIZE < fY || fBallY - BALL_SIZE > fY + PLATFORM_H)
-				{
-					MessageBoxA(NULL, "lose tbh", "", 0);
-					ExitProcess(0);
-				}
-				else
-				{
-					float fVelX, fVelY;
-					m_pBall->getVelocity(fVelX, fVelY);
-					m_pBall->setVelocity(-fVelX, fVelY);
-				}
-			}
-			if (fBallX + BALL_SIZE > fX2)
-			{
-				if (fBallY + BALL_SIZE < fY2 || fBallY - BALL_SIZE > fY2 + PLATFORM_H)
-				{
-					MessageBoxA(NULL, "lose tbh", "", 0);
-					ExitProcess(0);
-				}
-				else
-				{
-					float fVelX, fVelY;
-					m_pBall->getVelocity(fVelX, fVelY);
-					m_pBall->setVelocity(-fVelX, fVelY);
-				}
-			}
-#endif
-
-			if (m_pPlatform[0]->process())
-			{
-				bRedraw = true;
-				bSendPlatform = true;
-			}
-			if (m_pPlatform[1]->process()) bRedraw = true;
-			if (m_pBall->process()) bRedraw = true;
-		}
-		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
-		{
-			m_pKeyboard->handleKeyDown(ev.keyboard.keycode);
-		}
-		else if (ev.type == ALLEGRO_EVENT_KEY_UP)
-		{
-			m_pKeyboard->handleKeyUp(ev.keyboard.keycode);
 		}
 
-		if (bRedraw && al_is_event_queue_empty(m_pEventQueue))
+		if (/*bRedraw && */al_is_event_queue_empty(m_pEventQueue))
 		{
 			bRedraw = false;
 

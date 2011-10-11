@@ -29,6 +29,7 @@ bool Network::initialize()
 
 void Network::deinitialize()
 {
+	m_pPeer->CloseConnection(RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 	RakNet::RakPeerInterface::DestroyInstance(m_pPeer);
 }
 

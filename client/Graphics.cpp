@@ -17,18 +17,18 @@ bool Graphics::initialize()
 		return false;
 	}
 
-	/*m_pDefaultFont = al_load_ttf_font("miscfs.ttf", 72, 0);
+	m_pDefaultFont = al_load_ttf_font("miscfs.ttf", 72, 0);
 	if (!m_pDefaultFont)
 	{
 		return false;
-	}*/
+	}
 
 	return true;
 }
 
 void Graphics::deinitialize()
 {
-	//al_destroy_font(m_pDefaultFont);
+	al_destroy_font(m_pDefaultFont);
 	al_destroy_display(m_pDisplay);
 }
 
@@ -45,7 +45,7 @@ void Graphics::draw()
 	g_pGame->getPlatform(0)->draw();
 	g_pGame->getPlatform(1)->draw();
 
-	//al_draw_text(m_pDefaultFont, al_map_rgb(255, 255, 255), (SCREEN_W)/2, (SCREEN_H)/4, ALLEGRO_ALIGN_CENTRE, "hello world");
+	al_draw_text(m_pDefaultFont, al_map_rgb(255, 255, 255), (SCREEN_W)/2, 15.0f, ALLEGRO_ALIGN_CENTRE, "PONG");
 }
 
 ALLEGRO_DISPLAY *Graphics::getDisplay()

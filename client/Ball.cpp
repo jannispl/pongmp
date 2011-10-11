@@ -1,6 +1,7 @@
 #include "StdInc.h"
 #include "Ball.h"
 #include <math.h>
+#include <allegro5/allegro_primitives.h>
 
 Ball::Ball()
 	: m_bInteraction(false), m_fAngle(0.0f), m_fVelX(0.0f), m_fVelY(0.0f)
@@ -22,7 +23,8 @@ bool Ball::initialize()
 	}
 	
 	al_set_target_bitmap(m_pBitmap);
-	al_clear_to_color(al_map_rgb(255, 255, 255));
+	//al_clear_to_color(al_map_rgb(255, 255, 255));
+	al_draw_filled_circle(BALL_SIZE / 2.0f, BALL_SIZE / 2.0f, BALL_SIZE / 2.0f, al_map_rgb(255, 255, 255));
 
 	return true;
 }
@@ -97,6 +99,7 @@ bool Ball::process()
 void Ball::draw()
 {
 	al_draw_bitmap(m_pBitmap, m_fPosX, m_fPosY, 0);
+	//al_draw_circle(m_fPosX, m_fPosY, BALL_SIZE / 2.0f, al_map_rgb(255, 255, 255), 1.0f);
 }
 
 void Ball::setAngle(float fAngle)

@@ -17,6 +17,8 @@ public:
 
 	void process();
 
+	void send(RakNet::BitStream *pBitStream, PacketPriority priority, PacketReliability reliability, RakNet::SystemAddress systemAddress, bool bBroadcast);
+
 private:
 	RakNet::RakPeerInterface *m_pPeer;
 };

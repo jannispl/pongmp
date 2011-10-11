@@ -169,6 +169,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath=".\Group.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Group.h"
+			>
+		</File>
+		<File
 			RelativePath=".\main.cpp"
 			>
 		</File>
@@ -178,6 +186,14 @@
 		</File>
 		<File
 			RelativePath=".\Network.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Player.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Player.h"
 			>
 		</File>
 		<File

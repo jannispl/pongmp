@@ -2,6 +2,7 @@
 #define _STDINC_H
 
 #include <stdio.h>
+#include <string>
 
 #ifdef WIN32
   #define WIN32_LEAN_AND_MEAN
