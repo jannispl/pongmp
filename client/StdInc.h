@@ -6,6 +6,8 @@
 #include <windows.h>
 #endif
 
+#include <string>
+
 #include "../shared/Shared.h"
 
 #include "Game.h"

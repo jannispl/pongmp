@@ -12,6 +12,8 @@ public:
 	void setGroupSlot(int iSlot);
 	int getGroupSlot();
 
+	void sendPlayerIntro(Player *pPlayer, bool bFresh);
+	void sendPlayerOutro();
 	void sendPlatformUpdate(float fPosition, float fVelocity, char cPropulsionState);
 
 	RakNet::SystemAddress getSystemAddress();

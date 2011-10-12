@@ -53,11 +53,11 @@ Player *Group::getPlayer(int iSlot)
 
 Player *Group::findPlayer(RakNet::SystemAddress systemAddress)
 {
-	if (m_pPlayer[0]->getSystemAddress() == systemAddress)
+	if (m_pPlayer[0] != NULL && m_pPlayer[0]->getSystemAddress() == systemAddress)
 	{
 		return m_pPlayer[0];
 	}
-	else if (m_pPlayer[1]->getSystemAddress() == systemAddress)
+	else if (m_pPlayer[1] != NULL && m_pPlayer[1]->getSystemAddress() == systemAddress)
 	{
 		return m_pPlayer[1];
 	}

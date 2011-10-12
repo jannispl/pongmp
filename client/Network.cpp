@@ -5,6 +5,7 @@
 #include <RakNetTypes.h>
 
 Network::Network()
+	: m_fLastPlatformPacket(0.0f)
 {
 }
 
@@ -29,7 +30,7 @@ bool Network::initialize()
 
 void Network::deinitialize()
 {
-	m_pPeer->CloseConnection(RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
+	m_pPeer->Shutdown(300, 0, HIGH_PRIORITY);
 	RakNet::RakPeerInterface::DestroyInstance(m_pPeer);
 }
 
@@ -52,7 +53,7 @@ void Network::process()
 			printf("Our connection request has been accepted.\n");
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			printf("The server is full.\n");
+			g_pGame->getGraphics()->showStatusMessage("Sry, Server is full");
 			break;
 		case ID_DISCONNECTION_NOTIFICATION:
 			printf("We have been disconnected.\n");
@@ -61,6 +62,24 @@ void Network::process()
 			printf("Connection lost.\n");
 			break;
 
+		case ID_PLAYER_INTRO:
+			{
+				RakNet::BitStream bsIn(pPacket->data, pPacket->length, false);
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				char cIsFresh;
+				bsIn.Read(cIsFresh);
+
+				g_pGame->getGraphics()->showStatusMessage("Got other player", 3.0f);
+			}
+			break;
+
+		case ID_PLAYER_OUTRO:
+			{
+				g_pGame->getGraphics()->showStatusMessage("Other player left", 3.0f);
+			}
+			break;
+			
 		case ID_PLATFORM:
 			{
 				RakNet::BitStream bsIn(pPacket->data, pPacket->length, false);

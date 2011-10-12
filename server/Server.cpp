@@ -51,12 +51,27 @@ void Server::incomingConnection(RakNet::SystemAddress systemAddress)
 {
 	Player *pPlayer = new Player(systemAddress);
 
-	m_pGroup->addPlayer(pPlayer);
+	int iSlot = m_pGroup->addPlayer(pPlayer);
+
+	Player *pRemote = m_pGroup->getPlayer(iSlot ^ 1);
+	if (pRemote != NULL)
+	{
+		pRemote->sendPlayerIntro(pPlayer, true);
+		pPlayer->sendPlayerIntro(pRemote, false);
+	}
 }
 
 void Server::lostConnection(RakNet::SystemAddress systemAddress, Server::eQuitReason quitReason)
 {
-	m_pGroup->removePlayer(m_pGroup->findPlayer(systemAddress));
+	Player *pPlayer = m_pGroup->findPlayer(systemAddress);
+
+	Player *pRemote = m_pGroup->getPlayer(pPlayer->getGroupSlot() ^ 1);
+	if (pRemote != NULL)
+	{
+		pRemote->sendPlayerOutro();
+	}
+
+	m_pGroup->removePlayer(pPlayer);
 }
 
 void Server::platformUpdate(RakNet::SystemAddress systemAddress, float fPosition, float fVelocity, char cPropulsionState)

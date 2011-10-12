@@ -17,7 +17,7 @@ bool Graphics::initialize()
 		return false;
 	}
 
-	m_pDefaultFont = al_load_ttf_font("miscfs.ttf", 72, 0);
+	m_pDefaultFont = al_load_ttf_font("miscfs.ttf", 50, 0);
 	if (!m_pDefaultFont)
 	{
 		return false;
@@ -45,7 +45,30 @@ void Graphics::draw()
 	g_pGame->getPlatform(0)->draw();
 	g_pGame->getPlatform(1)->draw();
 
-	al_draw_text(m_pDefaultFont, al_map_rgb(255, 255, 255), (SCREEN_W)/2, 15.0f, ALLEGRO_ALIGN_CENTRE, "PONG");
+	al_draw_text(m_pDefaultFont, al_map_rgb(255, 0, 0), (SCREEN_W)/2, 15.0f, ALLEGRO_ALIGN_CENTRE, "PONG");
+
+	if (!m_sStatusMessage.empty())
+	{
+		if (m_fStatusEndTime > 0.0f && Shared::getCurrentTime() >= m_fStatusEndTime)
+		{
+			m_sStatusMessage.clear();
+		}
+		else
+		{
+			al_draw_text(m_pDefaultFont, al_map_rgb(255, 255, 255), SCREEN_W / 2, SCREEN_H / 2, ALLEGRO_ALIGN_CENTRE, m_sStatusMessage.c_str());
+		}
+	}
+}
+
+void Graphics::showStatusMessage(const std::string &sMessage, float fDuration)
+{
+	m_fStatusEndTime = fDuration > 0.0f ? Shared::getCurrentTime() + fDuration : 0.0f;
+	m_sStatusMessage = sMessage;
+}
+
+void Graphics::clearStatusMessage()
+{
+	m_sStatusMessage.clear();
 }
 
 ALLEGRO_DISPLAY *Graphics::getDisplay()

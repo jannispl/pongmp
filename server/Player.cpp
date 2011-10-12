@@ -22,6 +22,21 @@ int Player::getGroupSlot()
 	return m_iGroupSlot;
 }
 
+void Player::sendPlayerIntro(Player *pPlayer, bool bFresh)
+{
+	RakNet::BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_PLAYER_INTRO);
+	bsOut.Write((char)bFresh);
+	g_pServer->getNetwork()->send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, m_systemAddress, false);
+}
+
+void Player::sendPlayerOutro()
+{
+	RakNet::BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_PLAYER_OUTRO);
+	g_pServer->getNetwork()->send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, m_systemAddress, false);
+}
+
 void Player::sendPlatformUpdate(float fPosition, float fVelocity, char cPropulsionState)
 {
 	RakNet::BitStream bsOut;
