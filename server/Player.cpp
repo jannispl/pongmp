@@ -4,7 +4,7 @@
 #include <BitStream.h>
 
 Player::Player(RakNet::SystemAddress systemAddress)
-	: m_systemAddress(systemAddress)
+	: m_systemAddress(systemAddress), m_fLastPlatformUpdate(-1.0f)
 {
 }
 

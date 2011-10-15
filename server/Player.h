@@ -18,9 +18,13 @@ public:
 
 	RakNet::SystemAddress getSystemAddress();
 
+	float m_fLastPlatformUpdate;
+
 private:
 	int m_iGroupSlot;
 	RakNet::SystemAddress m_systemAddress;
+
+	float m_fPlatformPosition;
 };
 
 #endif

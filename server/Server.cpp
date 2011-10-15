@@ -81,6 +81,10 @@ void Server::platformUpdate(RakNet::SystemAddress systemAddress, float fPosition
 	Player *pRemote = m_pGroup->getPlayer(pPlayer->getGroupSlot() ^ 1);
 	if (pRemote != NULL)
 	{
-		pRemote->sendPlatformUpdate(fPosition, fVelocity, cPropulsionState);
+		if (Shared::getCurrentTime() - pRemote->m_fLastPlatformUpdate >= 0.08f)
+		{
+			pRemote->m_fLastPlatformUpdate = Shared::getCurrentTime();
+			pRemote->sendPlatformUpdate(fPosition, fVelocity, cPropulsionState);
+		}
 	}
 }

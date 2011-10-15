@@ -5,7 +5,7 @@
 #include <RakNetTypes.h>
 
 Network::Network()
-	: m_fLastPlatformPacket(0.0f)
+	: m_fLastPlatformPacket(0.0f), m_iAvailBuffers(0)
 {
 }
 
@@ -40,15 +40,6 @@ void Network::process()
 	{
 		switch (pPacket->data[0])
 		{
-		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-			printf("Another client has disconnected.\n");
-			break;
-		case ID_REMOTE_CONNECTION_LOST:
-			printf("Another client has lost the connection.\n");
-			break;
-		case ID_REMOTE_NEW_INCOMING_CONNECTION:
-			printf("Another client has connected.\n");
-			break;
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 			printf("Our connection request has been accepted.\n");
 			break;
@@ -100,12 +91,29 @@ void Network::process()
 				bsIn.Read(fVelocity);
 				bsIn.Read(propulsionState);
 
-				Platform *p = g_pGame->getPlatform(1);
+				/*Platform *p = g_pGame->getPlatform(1);
 				float fX, fY;
 				p->getPosition(fX, fY);
 				p->setPosition(fX, fPos);
 				p->setVelocity(fVelocity);
-				p->setPropulsionState(propulsionState);
+				p->setPropulsionState(propulsionState);*/
+
+				switch (m_iAvailBuffers)
+				{
+				case 0:
+					m_iAvailBuffers = 1;
+					m_fPosBuffer[0] = fPos;
+					m_fPosBufferTime[0] = Shared::getCurrentTime();
+					break;
+
+				default:
+					m_iAvailBuffers = 2;
+					m_fPosBuffer[1] = m_fPosBuffer[0];
+					m_fPosBufferTime[1] = m_fPosBufferTime[0];
+					m_fPosBuffer[0] = fPos;
+					m_fPosBufferTime[0] = Shared::getCurrentTime();
+					break;
+				}
 			}
 			break;
 

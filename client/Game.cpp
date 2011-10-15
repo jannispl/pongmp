@@ -229,6 +229,30 @@ void Game::run()
 			m_pBall->draw();
 			
 			al_flip_display();
+
+			// some platform interpolation?
+			if (m_pNetwork->m_iAvailBuffers == 2)
+			{
+				float fNow = Shared::getCurrentTime();
+				float fFirstTime = m_pNetwork->m_fPosBufferTime[1];
+				float fFirstVal = m_pNetwork->m_fPosBuffer[1];
+				float fNewTime = m_pNetwork->m_fPosBufferTime[0];
+				float fNewVal = m_pNetwork->m_fPosBuffer[0];
+
+				float fDelta = fNow - fNewTime;
+				if (fDelta <= fNewTime - fFirstTime)
+				{
+					float fInterpPos = fFirstVal + ((fNewVal - fFirstVal) / (fNewTime - fFirstTime)) * fDelta;
+
+					/*char tmp[128];
+					sprintf(tmp, "%f", fDelta);
+					m_pGraphics->showStatusMessage(tmp);*/
+
+					float fX, fY;
+					m_pPlatform[1]->getPosition(fX, fY);
+					m_pPlatform[1]->setPosition(fX, fInterpPos);
+				}
+			}
 		}
 	}
 	while (m_bRunning);
